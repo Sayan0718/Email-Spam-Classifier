@@ -53,5 +53,8 @@ sns.histplot(df[df['target']==1]['num_sentences'], color='red')
 
 sns.pairplot(df,hue='target')
 
+df2 = df.drop('text',axis=1)
+df2.corr()
+sns.heatmap(df2.corr(),annot=True)
 
 
