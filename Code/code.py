@@ -57,4 +57,96 @@ df2 = df.drop('text',axis=1)
 df2.corr()
 sns.heatmap(df2.corr(),annot=True)
 
+DATA PREPROCESSING
+
+from nltk.corpus import stopwords
+nltk.download('stopwords')
+# stopwords.words("english")
+
+import string
+string.punctuation
+
+from nltk.stem.porter import PorterStemmer
+ps=PorterStemmer()
+# ps.stem('loving')
+
+# lower case
+# tokenization
+# removing special characters
+# removing stop words and punctuation
+# stemming
+
+
+def transform_text(text):
+      text=text.lower()
+      text=nltk.word_tokenize(text)
+      y=[]
+      for i in text :
+        if i.isalnum():
+          y.append(i)
+      text = y[:]
+      y.clear()
+
+      for i in text:
+        if i not in stopwords.words("english")and i not in string.punctuation:
+          y.append(i)
+      text =y[:]
+      y.clear()
+
+      for i in text:
+          y.append(ps.stem(i))
+
+      return " ".join(y)
+
+df['transformed_text']=df['text'].apply(transform_text)
+df.head()
+from wordcloud import WordCloud
+# Create a WordCloud object with desired parameters
+wc = WordCloud(width=500, height=500, min_font_size=10, background_color='white')
+
+spam_wc=wc.generate(df[df['target']==1]['transformed_text'].str.cat(sep=''))
+
+plt.figure(figsize=(12,6))
+plt.imshow(spam_wc)
+ham_wc=wc.generate(df[df['target']==0]['transformed_text'].str.cat(sep=''))
+
+plt.figure(figsize=(12,6))
+plt.imshow(ham_wc)
+spam_cor=[]
+for msg in df[df['target']==1]['transformed_text'].tolist():
+  for word in msg.split():
+    spam_cor.append(word)
+
+len(spam_cor)
+
+from collections import Counter
+counter_obj = Counter(spam_cor)
+most_common_items = counter_obj.most_common(30)
+
+df_most_common = pd.DataFrame(most_common_items, columns=['0', '1'])
+
+sns.barplot(data=df_most_common, x='0', y='1')
+
+plt.xticks(rotation='vertical')
+plt.show()
+
+ham_cor=[]
+for msg in df[df['target']==0]['transformed_text'].tolist():
+  for word in msg.split():
+    ham_cor.append(word)
+
+
+len(ham_cor)
+counter_obj = Counter(ham_cor)
+most_common_items = counter_obj.most_common(30)
+
+
+df_most_common = pd.DataFrame(most_common_items, columns=['0', '1'])
+
+sns.barplot(data=df_most_common, x='0', y='1')
+
+plt.xticks(rotation='vertical')
+plt.show()
+
+
 
