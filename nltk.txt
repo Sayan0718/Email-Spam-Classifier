@@ -1,2 +1,2 @@
-nltk.download('stopwords')
-nltk.download('punkt')
+stopwords
+punkt
