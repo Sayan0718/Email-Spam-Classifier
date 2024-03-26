@@ -57,7 +57,7 @@ df2 = df.drop('text',axis=1)
 df2.corr()
 sns.heatmap(df2.corr(),annot=True)
 
-DATA PREPROCESSING
+#Data PreProcessing
 
 from nltk.corpus import stopwords
 nltk.download('stopwords')
@@ -99,11 +99,10 @@ def transform_text(text):
       return " ".join(y)
 
 df['transformed_text']=df['text'].apply(transform_text)
-df.head()
+
 from wordcloud import WordCloud
 # Create a WordCloud object with desired parameters
 wc = WordCloud(width=500, height=500, min_font_size=10, background_color='white')
-
 spam_wc=wc.generate(df[df['target']==1]['transformed_text'].str.cat(sep=''))
 
 plt.figure(figsize=(12,6))
@@ -112,41 +111,35 @@ ham_wc=wc.generate(df[df['target']==0]['transformed_text'].str.cat(sep=''))
 
 plt.figure(figsize=(12,6))
 plt.imshow(ham_wc)
-spam_cor=[]
+
+
+spam_corpus=[]
 for msg in df[df['target']==1]['transformed_text'].tolist():
   for word in msg.split():
-    spam_cor.append(word)
-
-len(spam_cor)
+    spam_corpus.append(word)
 
 from collections import Counter
 counter_obj = Counter(spam_cor)
 most_common_items = counter_obj.most_common(30)
-
 df_most_common = pd.DataFrame(most_common_items, columns=['0', '1'])
-
 sns.barplot(data=df_most_common, x='0', y='1')
-
 plt.xticks(rotation='vertical')
 plt.show()
 
-ham_cor=[]
+
+ham_corpus=[]
 for msg in df[df['target']==0]['transformed_text'].tolist():
   for word in msg.split():
-    ham_cor.append(word)
+    ham_corpus.append(word)
 
-
-len(ham_cor)
 counter_obj = Counter(ham_cor)
 most_common_items = counter_obj.most_common(30)
-
-
 df_most_common = pd.DataFrame(most_common_items, columns=['0', '1'])
-
 sns.barplot(data=df_most_common, x='0', y='1')
-
 plt.xticks(rotation='vertical')
 plt.show()
+
+#Model Building
 
 
 
